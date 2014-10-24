@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <p id="text">var1 = 100 ; <br> var2 = var1 + 900 ; <br> var3 = var1 + 100;</p> 
+
+
+    <button onclick="obviously()">Parse</button>
+
+    <p id="demo"></p>
+
+    <script>
+        function obviously() {
+
+            text = document.getElementById("text").innerHTML.split('<br>');
+ 
+//Regex and syntax
+//================
+            var declarationRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*(\d+)\s*\;/;
+            var declarationSyntax;
+
+            var additionRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\+\s*(\d+)\s*\;/;
+            var additionSyntax;
+//================
+
+
+
+//Variables and values extraction
+//================
+            var variableDeclarations = [];
+            var variableValues = [];
+
+            var additionPreDeclarations = [];
+            var additionPostDeclarations = [];
+            var additionVariables = [];
+
+            for (i = 0; i < text.length; i++) {
+
+                if (declarationRegex.test(text[i])) {
+                    declarationSyntax = declarationRegex.exec(text[i]);
+
+                    variableDeclarations.push(declarationSyntax[1]);
+                    variableValues.push(declarationSyntax[2]);
+
+                } 
+                else if(additionRegex.test(text[i])){
+                    additionSyntax = additionRegex.exec(text[i]);
+
+                    additionPreDeclarations.push(additionSyntax[1]);
+                    additionPostDeclarations.push(additionSyntax[2]);
+                    additionVariables.push(additionSyntax[3]);
+                } 
+                else {
+                    document.writeln("> FAILURE at "+(i+1)+" iteration <");
+                    document.writeln('<br>');
+                }
+
+            }
+//================
+
+
+            var variableIsDeclared = false; 
+            var addition;
+
+            for(i=0;i<additionPreDeclarations.length;i++){
+               for(j=0;j<variableDeclarations.length;j++){
+                   if(variableDeclarations[j] == additionPostDeclarations[i]){
+                      declaredVariableValue = variableValues[j];
+                      variableIsDeclared = true;
+                   }
+               }
+               if(variableIsDeclared){
+                   addition = parseInt(declaredVariableValue) + parseInt(additionVariables[i]);
+                   document.writeln(additionPreDeclarations[i]+"="+addition);
+                   document.writeln('<br>');
+               }
+            }
+
+            //document.writeln(addition);
+        }
+    </script>
+
+</body>
+
+</html>
