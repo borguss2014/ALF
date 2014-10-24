@@ -5,15 +5,13 @@
 
     <p id="text">v1 = 5346;
         <br> v2 = 10 ;
-        <br> v3 = 990;
-        <br> adunare1 = v1 + 100;
-        <br> adunare2 = v3 + 48;
-        <br> adunare3 = v2 + 11;
-        <br> adunare4 = v1 + 55;
- </p>
+        <br> var = v2 + 10;
+        <br> var2 = v1 + 100000;
+        <br> ceva = 555 + v1;
+    </p>
 
 
-    <button onclick="obviously()">Parse</button>
+    <button onclick="obviously()">Parse, calculate and print</button>
 
     <p id="demo"></p>
 
@@ -29,6 +27,9 @@
 
             var additionRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\+\s*(\d+)\s*\;/;
             var additionSyntax;
+
+            var inversedAdditionRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*(\d+)\s*\+\s*([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\;/;
+            var inversedAdditionSyntax;
             //================
 
 
@@ -41,6 +42,10 @@
             var additionPreDeclarations = [];
             var additionPostDeclarations = [];
             var additionVariables = [];
+
+            var inversedAdditionPreDeclarations = [];
+            var inversedAdditionPostDeclarations = [];
+            var inversedAdditionVariables = [];
 
             for (i = 0; i < text.length; i++) {
 
@@ -56,8 +61,14 @@
                     additionPreDeclarations.push(additionSyntax[1]);
                     additionPostDeclarations.push(additionSyntax[2]);
                     additionVariables.push(additionSyntax[3]);
+                } else if (inversedAdditionRegex.test(text[i])) {
+                    inversedAdditionSyntax = inversedAdditionRegex.exec(text[i]);
+                    inversedAdditionPreDeclarations.push(inversedAdditionSyntax[1]);
+                    inversedAdditionVariables.push(inversedAdditionSyntax[2]);
+                    inversedAdditionPostDeclarations.push(inversedAdditionSyntax[3]);
+
                 } else {
-                    document.writeln("<span style=\"color:red;\">> Syntax error on line " + (i + 1) + "<\/span>"); 
+                    document.writeln("<span style=\"color:red;\">> Syntax error on line " + (i + 1) + "<\/span>");
                     document.writeln('<br>');
 
                 }
@@ -77,8 +88,7 @@
                         declaredVariableValue = variableValues[j];
                         variableIsDeclared = true;
                         break;
-                    }
-                    else{
+                    } else {
                         variableIsDeclared = false;
                     }
                 }
@@ -88,6 +98,27 @@
                     document.writeln('<br>');
                 } else {
                     document.writeln("<span style=\"color:red;\"> > ERROR ! Cannot print '" + additionPreDeclarations[i] + "'. Variable '" + additionPostDeclarations[i] + "' is not declared <\/span>");
+                    document.writeln('<br>');
+                }
+            }
+
+
+            for (i = 0; i < inversedAdditionPreDeclarations.length; i++) {
+                for (j = 0; j < variableDeclarations.length; j++) {
+                    if (variableDeclarations[j] == inversedAdditionPostDeclarations[i]) {
+                        declaredVariableValue = variableValues[j];
+                        variableIsDeclared = true;
+                        break;
+                    } else {
+                        variableIsDeclared = false;
+                    }
+                }
+                if (variableIsDeclared) {
+                    addition = parseInt(declaredVariableValue) + parseInt(inversedAdditionVariables[i]);
+                    document.writeln(inversedAdditionPreDeclarations[i] + "=" + addition);
+                    document.writeln('<br>');
+                } else {
+                    document.writeln("<span style=\"color:red;\"> > ERROR ! Cannot print '" + inversedAdditionPreDeclarations[i] + "'. Variable '" + inversedAdditionPostDeclarations[i] + "' is not declared <\/span>");
                     document.writeln('<br>');
                 }
             }
