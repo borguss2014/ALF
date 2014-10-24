@@ -3,33 +3,41 @@
 
 <body>
 
-    <p id="text">v1 = 5346;
-        <br> v2 = 10 ;
-        <br> var = v2 + 10;
-        <br> var2 = v1 + 100000;
-        <br> ceva = 555 + v1;
+    <p id="text">v1 = 5346 (G_G)
+        <br> v2 = 10 (G_G)
+        <br> var = v2 + 10 (G_G)
+        <br> var2 = v1 + 100000(G_G)
+        <br> ceva = 555 + v1(G_G)
+        <br> ceva2 = v1 + v2(G_G)
+		<br> ceva3 = 45+ 20 (G_G)
     </p>
 
 
-    <button onclick="obviously()">Parse, calculate and print</button>
+    <button onclick="GoodGame()">Parse</button>
 
     <p id="demo"></p>
 
     <script>
-        function obviously() {
+        function GoodGame() {
 
             text = document.getElementById("text").innerHTML.split('<br>');
 
             //Regex and syntax
             //================
-            var declarationRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*(\d+)\s*\;/;
+            var declarationRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*(\d+)\s*\(\G\_\G\)/;
             var declarationSyntax;
 
-            var additionRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\+\s*(\d+)\s*\;/;
+            var additionRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\+\s*(\d+)\s*\(\G\_\G\)/;
             var additionSyntax;
 
-            var inversedAdditionRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*(\d+)\s*\+\s*([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\;/;
+            var inversedAdditionRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*(\d+)\s*\+\s*([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\(\G\_\G\)/;
             var inversedAdditionSyntax;
+			
+			var multipleAdditionRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\+\s*([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\(\G\_\G\)/;
+            var multipleAdditionSyntax;
+			
+			var integerAdditionRegex = /([a-zA-Z_]+|[a-zA-Z_]+\w+)\s*\=\s*(\d+)\s*\+\s*(\d+)\s*\(\G\_\G\)/;
+			var integerAdditionSyntax;
             //================
 
 
@@ -46,6 +54,14 @@
             var inversedAdditionPreDeclarations = [];
             var inversedAdditionPostDeclarations = [];
             var inversedAdditionVariables = [];
+			
+			var multipleAdditionPreDeclarations = [];
+            var multipleAdditionFirstVariable = [];
+            var multipleAdditionSecondVariable = [];
+			
+			var integerAdditionPreDeclarations = [];
+            var integerAdditionFirstVariable = [];
+            var integerAdditionSecondVariable = [];
 
             for (i = 0; i < text.length; i++) {
 
@@ -67,7 +83,23 @@
                     inversedAdditionVariables.push(inversedAdditionSyntax[2]);
                     inversedAdditionPostDeclarations.push(inversedAdditionSyntax[3]);
 
-                } else {
+                }
+				  else if(multipleAdditionRegex.test(text[i])){
+					multipleAdditionSyntax = multipleAdditionRegex.exec(text[i]);
+					
+					multipleAdditionPreDeclarations.push(multipleAdditionSyntax[1]);
+					multipleAdditionFirstVariable.push(multipleAdditionSyntax[2]);
+					multipleAdditionSecondVariable.push(multipleAdditionSyntax[3]);
+					
+				  }
+				  else if(integerAdditionRegex.test(text[i])){
+					integerAdditionSyntax = integerAdditionRegex.exec(text[i]);
+					
+					integerAdditionPreDeclarations.push(integerAdditionSyntax[1]);
+					integerAdditionFirstVariable.push(integerAdditionSyntax[2]);
+					integerAdditionSecondVariable.push(integerAdditionSyntax[3]);
+				  }
+				else {
                     document.writeln("<span style=\"color:red;\">> Syntax error on line " + (i + 1) + "<\/span>");
                     document.writeln('<br>');
 
@@ -80,8 +112,11 @@
             //Where magic happens
             //================
             var variableIsDeclared = false;
-            //var addition;
-
+			var variableOneIsDeclared = false;
+			var variableTwoIsDeclared = false;
+			
+            
+			//var = var + int;
             for (i = 0; i < additionPreDeclarations.length; i++) {
                 for (j = 0; j < variableDeclarations.length; j++) {
                     if (variableDeclarations[j] == additionPostDeclarations[i]) {
@@ -102,7 +137,8 @@
                 }
             }
 
-
+			
+			//var = int + var;
             for (i = 0; i < inversedAdditionPreDeclarations.length; i++) {
                 for (j = 0; j < variableDeclarations.length; j++) {
                     if (variableDeclarations[j] == inversedAdditionPostDeclarations[i]) {
@@ -122,6 +158,64 @@
                     document.writeln('<br>');
                 }
             }
+			
+			
+			//var = var + var;
+			for (i = 0; i < multipleAdditionPreDeclarations.length; i++) {
+                for (j = 0; j < variableDeclarations.length; j++) {
+                    if (multipleAdditionFirstVariable[i] == variableDeclarations[j]) {
+                        declaredVariableOneValue = variableValues[j];
+                        variableOneIsDeclared = true;
+                        break;
+                    } else {
+                        variableOneIsDeclared = false;
+                    }
+                }
+				
+				for (k = 0; k < variableDeclarations.length; k++) {
+                    if (multipleAdditionSecondVariable[i] == variableDeclarations[k]) {
+                        declaredVariableTwoValue = variableValues[k];
+                        variableTwoIsDeclared = true;
+                        break;
+                    } else {
+                        variableTwoIsDeclared = false;
+                    }
+                }
+				
+                if (variableOneIsDeclared == false) {
+				
+					document.writeln("<span style=\"color:red;\"> > ERROR ! Cannot print '" + multipleAdditionPreDeclarations[i] + "'. Variable '" + multipleAdditionFirstVariable[i] + "' is not declared <\/span>");
+                    document.writeln('<br>');
+					
+                    
+                }
+				if(variableTwoIsDeclared == false){
+				
+					document.writeln("<span style=\"color:red;\"> > ERROR ! Cannot print '" + multipleAdditionPreDeclarations[i] + "'. Variable '" + multipleAdditionSecondVariable[i] + "' is not declared <\/span>");
+                    document.writeln('<br>');
+					
+                }
+				if(variableOneIsDeclared == true && variableTwoIsDeclared == true){
+					addition = parseInt(declaredVariableOneValue) + parseInt(declaredVariableTwoValue);
+                    document.writeln(multipleAdditionPreDeclarations[i] + "=" + addition);
+                    document.writeln('<br>');
+				}
+				
+            }
+			
+			
+			//var = int + int;
+			for (i = 0; i < integerAdditionPreDeclarations.length; i++) {
+                
+					addition = parseInt(integerAdditionFirstVariable[i]) + parseInt(integerAdditionSecondVariable[i]);
+                    document.writeln(integerAdditionPreDeclarations[i] + "=" + addition);
+                    document.writeln('<br>');
+				
+				
+            }
+		
+
+            
             //================
 
         }
