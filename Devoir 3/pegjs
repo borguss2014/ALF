@@ -1,0 +1,67 @@
+start
+ = statement+
+
+statement
+ = space t:type endOfLine{return t;} / space v:verification endOfLine{return v;}
+
+
+type 
+ = expression
+/ declaration
+/ printing
+/ verification
+
+expression
+ = beginner space variable:variableName space "=" space first:variableData space operation:operation space second:variableData space terminator{return {type:operation,variable:variable,firstTerm:first,secondTerm:second};}
+
+declaration
+ = beginner space variable:variableName space "=" space int:integer space terminator{return {type:"declaration",variable:variable,integer:int};}
+
+variableName
+ = first:[a-zA-Z] second:[a-zA-Z0-9_]* {return first+second.join("");}
+
+variableData
+ = integer 
+/ variableName
+
+operation
+ = plus:"+" {return "addition";} / minus:"-" {return "substraction";} / multiplication:"*" {return "multiplication";} / division:"/" {return "division";}
+
+operationCondition
+ = equal:"==" {return "equal";} / more:">" {return "more";} / less:"<" {return "less";}
+
+integer
+ = digits: [0-9]+ {return parseInt(digits.join(""),10);}
+
+printing
+ = printBegin space string:string space terminator{return {type:"print",string:string};}
+
+
+
+verification
+ = "if" space "(" space condition:condition space ")" space endOfLine "<|"  endOfLine statement:statement+ space  endOfLine "|>" space endOfLine space elseStm:else? endOfLine {return {type:"if",condition:condition,statement:statement, else:elseStm};}
+
+else
+ = "else"  space endOfLine "<|"  endOfLine statement:statement+ space  endOfLine "|>" endOfLine {return statement;}
+
+condition
+ = a:variableData space op:operationCondition space b:variableData {return {operation:op,condOne:a,condTwo:b};}
+
+
+endOfLine
+ = [\n]*
+
+string
+ = "\"" letters:[^"]* "\"" { return letters.join(""); }
+
+space
+ =  [ ]*
+
+printBegin
+ = ">>"
+
+beginner
+ = ">"
+
+terminator 
+ = "<>"

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+
+<script src="peg-0.8.0.min.js"></script>
+
+<script>
+var variables ;
+
+	
+function Parse(){
+document.getElementById("console").value = "";
+variables = []; var testing;
+console.log("Entering Parse()"); 
+
+
+var parser_code = document.getElementById("parse_code").value;
+var peg_code = document.getElementById("code").value;
+
+var parser = PEG.buildParser(parser_code);
+var language = parser.parse(peg_code);
+
+console.log(language);
+//document.getElementById("console").value = "";
+
+parseLanguage(language);
+
+	//var names = Object.keys(variables);
+	//console.log(names[0]);
+	//console.log(variables["z"]);
+}
+	
+function parseLanguage(dataArray){
+	
+for(var i=0; i<dataArray.length; i++){
+	var statement = dataArray[i];
+	var names = Object.keys(variables);
+	
+	switch(statement["type"]){
+	
+		case "declaration": 
+			variables[statement["variable"]] = parseInt(statement["integer"]); 
+			break;
+			
+		case "addition" : 
+			var variableFound = false;
+			var firstVarFound = false; 
+			var secondVarFound = false;
+			if(isNaN(parseInt(statement["firstTerm"])) && !isNaN(parseInt(statement["secondTerm"]))){
+				//console.log("Its NaN");
+				for(var j=0; j<names.length; j++){
+					//console.log("Entering for loop");
+					if(statement["firstTerm"] == names[j]) {
+						variableFound = true;
+						variables[statement["variable"]] = parseInt(variables[names[j]] + statement["secondTerm"]);
+						document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+						break;
+					}
+					else {variableFound = false;}
+				}
+				if(variableFound == false) document.getElementById("console").value += "Yo dude , you forgot to define da variable "+ "'"+statement["firstTerm"]+"'" + "!";
+			}
+			else if(isNaN(parseInt(statement["secondTerm"])) && !isNaN(parseInt(statement["firstTerm"]))) {
+				for(var j=0; j<names.length; j++){
+					if(statement["secondTerm"] == names[j]){
+						variableFound = true;
+						variables[statement["variable"]] = parseInt(statement["firstTerm"] + variables[names[j]]);
+						document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+						break;
+					}
+					else {variableFound = false;}
+				}
+				if(variableFound == false) document.getElementById("console").value += "Buddy , ye should define "+ "'"+statement["secondTerm"]+"'" + "!";
+			}
+			else if(!isNaN(parseInt(statement["firstTerm"])) && !isNaN(parseInt(statement["secondTerm"])) ){
+				variables[statement["variable"]] = parseInt(statement["firstTerm"] + statement["secondTerm"]);
+				document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+			}
+			else if(isNaN(parseInt(statement["firstTerm"])) && isNaN(parseInt(statement["secondTerm"]))){
+				console.log("Both not numbers");
+				for(var j=0; j<names.length; j++){
+					if(statement["firstTerm"] == names[j]) {
+						console.log("firstTerm passed"); console.log(statement["firstTerm"]); console.log(variables[statement["firstTerm"]]);
+						firstVarFound = true;
+						
+					}
+				}
+				for(var k=0; k<names.length; k++){
+					if(statement["secondTerm"] == names[k]) {
+						console.log("secondTerm passed"); console.log(statement["secondTerm"]); console.log(variables[statement["secondTerm"]]);
+						secondVarFound = true;
+						
+					}
+				}
+				if(firstVarFound && secondVarFound){
+					variables[statement["variable"]] = parseInt(variables[statement["firstTerm"]] + variables[statement["secondTerm"]]);
+					document.getElementById("console").value += "\n" + statement["variable"] + " = " + variables[statement["variable"]];
+				}
+			}
+			
+			break;
+			
+		case "multiplication":
+			var variableFound = false;
+			var firstVarFound = false; 
+			var secondVarFound = false;
+			if(isNaN(parseInt(statement["firstTerm"])) && !isNaN(parseInt(statement["secondTerm"]))){
+				//console.log("Its NaN");
+				for(var j=0; j<names.length; j++){
+					//console.log("Entering for loop");
+					if(statement["firstTerm"] == names[j]) {
+						variableFound = true;
+						variables[statement["variable"]] = parseInt(variables[names[j]] * statement["secondTerm"]);
+						document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+						break;
+					}
+					else {variableFound = false;}
+				}
+				if(variableFound == false) document.getElementById("console").value += "Yo dude , you forgot to define da variable "+ "'"+statement["firstTerm"]+"'" + "!";
+			}
+			else if(isNaN(parseInt(statement["secondTerm"])) && !isNaN(parseInt(statement["firstTerm"]))) {
+				for(var j=0; j<names.length; j++){
+					if(statement["secondTerm"] == names[j]){
+						variableFound = true;
+						variables[statement["variable"]] = parseInt(statement["firstTerm"] * variables[names[j]]);
+						document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+						break;
+					}
+					else {variableFound = false;}
+				}
+				if(variableFound == false) document.getElementById("console").value += "Buddy , ye should define "+ "'"+statement["secondTerm"]+"'" + "!";
+			}
+			else if(!isNaN(parseInt(statement["firstTerm"])) && !isNaN(parseInt(statement["secondTerm"])) ){
+				variables[statement["variable"]] = parseInt(statement["firstTerm"] * statement["secondTerm"]);
+				document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+			}
+			else if(isNaN(parseInt(statement["firstTerm"])) && isNaN(parseInt(statement["secondTerm"]))){
+				console.log("Both not numbers");
+				for(var j=0; j<names.length; j++){
+					if(statement["firstTerm"] == names[j]) {
+						console.log("firstTerm passed"); console.log(statement["firstTerm"]); console.log(variables[statement["firstTerm"]]);
+						firstVarFound = true;
+						
+					}
+				}
+				for(var k=0; k<names.length; k++){
+					if(statement["secondTerm"] == names[k]) {
+						console.log("secondTerm passed"); console.log(statement["secondTerm"]); console.log(variables[statement["secondTerm"]]);
+						secondVarFound = true;
+						
+					}
+				}
+				if(firstVarFound && secondVarFound){
+					variables[statement["variable"]] = parseInt(variables[statement["firstTerm"]] * variables[statement["secondTerm"]]);
+					document.getElementById("console").value += "\n" + statement["variable"] + " = " + variables[statement["variable"]];
+				}
+			}
+			break;
+		case "substraction":
+			var variableFound = false;
+			var firstVarFound = false; 
+			var secondVarFound = false;
+			if(isNaN(parseInt(statement["firstTerm"])) && !isNaN(parseInt(statement["secondTerm"]))){
+				//console.log("Its NaN");
+				for(var j=0; j<names.length; j++){
+					//console.log("Entering for loop");
+					if(statement["firstTerm"] == names[j]) {
+						variableFound = true;
+						variables[statement["variable"]] = parseInt(variables[names[j]] - statement["secondTerm"]);
+						document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+						break;
+					}
+					else {variableFound = false;}
+				}
+				if(variableFound == false) document.getElementById("console").value += "Yo dude , you forgot to define da variable "+ "'"+statement["firstTerm"]+"'" + "!";
+			}
+			else if(isNaN(parseInt(statement["secondTerm"])) && !isNaN(parseInt(statement["firstTerm"]))) {
+				for(var j=0; j<names.length; j++){
+					if(statement["secondTerm"] == names[j]){
+						variableFound = true;
+						variables[statement["variable"]] = parseInt(statement["firstTerm"] - variables[names[j]]);
+						document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+						break;
+					}
+					else {variableFound = false;}
+				}
+				if(variableFound == false) document.getElementById("console").value += "Buddy , ye should define "+ "'"+statement["secondTerm"]+"'" + "!";
+			}
+			else if(!isNaN(parseInt(statement["firstTerm"])) && !isNaN(parseInt(statement["secondTerm"])) ){
+				variables[statement["variable"]] = parseInt(statement["firstTerm"] - statement["secondTerm"]);
+				document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+			}
+			else if(isNaN(parseInt(statement["firstTerm"])) && isNaN(parseInt(statement["secondTerm"]))){
+				console.log("Both not numbers");
+				for(var j=0; j<names.length; j++){
+					if(statement["firstTerm"] == names[j]) {
+						console.log("firstTerm passed"); console.log(statement["firstTerm"]); console.log(variables[statement["firstTerm"]]);
+						firstVarFound = true;
+						
+					}
+				}
+				for(var k=0; k<names.length; k++){
+					if(statement["secondTerm"] == names[k]) {
+						console.log("secondTerm passed"); console.log(statement["secondTerm"]); console.log(variables[statement["secondTerm"]]);
+						secondVarFound = true;
+						
+					}
+				}
+				if(firstVarFound && secondVarFound){
+					variables[statement["variable"]] = parseInt(variables[statement["firstTerm"]] - variables[statement["secondTerm"]]);
+					document.getElementById("console").value += "\n" + statement["variable"] + " = " + variables[statement["variable"]];
+				}
+			}
+			break;
+		case "division":
+			var variableFound = false;
+			var firstVarFound = false; 
+			var secondVarFound = false;
+			if(isNaN(parseInt(statement["firstTerm"])) && !isNaN(parseInt(statement["secondTerm"]))){
+				//console.log("Its NaN");
+				for(var j=0; j<names.length; j++){
+					//console.log("Entering for loop");
+					if(statement["firstTerm"] == names[j]) {
+						variableFound = true;
+						variables[statement["variable"]] = parseInt(variables[names[j]] / statement["secondTerm"]);
+						document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+						break;
+					}
+					else {variableFound = false;}
+				}
+				if(variableFound == false) document.getElementById("console").value += "Yo dude , you forgot to define da variable "+ "'"+statement["firstTerm"]+"'" + "!";
+			}
+			else if(isNaN(parseInt(statement["secondTerm"])) && !isNaN(parseInt(statement["firstTerm"]))) {
+				for(var j=0; j<names.length; j++){
+					if(statement["secondTerm"] == names[j]){
+						variableFound = true;
+						variables[statement["variable"]] = parseInt(statement["firstTerm"] / variables[names[j]]);
+						document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+						break;
+					}
+					else {variableFound = false;}
+				}
+				if(variableFound == false) document.getElementById("console").value += "Buddy , ye should define "+ "'"+statement["secondTerm"]+"'" + "!";
+			}
+			else if(!isNaN(parseInt(statement["firstTerm"])) && !isNaN(parseInt(statement["secondTerm"])) ){
+				variables[statement["variable"]] = parseInt(statement["firstTerm"] / statement["secondTerm"]);
+				document.getElementById("console").value += "\n"+statement["variable"] + " = " + variables[statement["variable"]];
+			}
+			else if(isNaN(parseInt(statement["firstTerm"])) && isNaN(parseInt(statement["secondTerm"]))){
+				console.log("Both not numbers");
+				for(var j=0; j<names.length; j++){
+					if(statement["firstTerm"] == names[j]) {
+						console.log("firstTerm passed"); console.log(statement["firstTerm"]); console.log(variables[statement["firstTerm"]]);
+						firstVarFound = true;
+						
+					}
+				}
+				for(var k=0; k<names.length; k++){
+					if(statement["secondTerm"] == names[k]) {
+						console.log("secondTerm passed"); console.log(statement["secondTerm"]); console.log(variables[statement["secondTerm"]]);
+						secondVarFound = true;
+						
+					}
+				}
+				if(firstVarFound && secondVarFound){
+					variables[statement["variable"]] = parseInt(variables[statement["firstTerm"]] / variables[statement["secondTerm"]]);
+					document.getElementById("console").value += "\n" + statement["variable"] + " = " + variables[statement["variable"]];
+				}
+			}
+			break;
+			
+		case "print":
+			if(typeof(statement["string"]) == "string")
+			{
+				document.getElementById("console").value += "\n" + statement["string"];
+ 			}
+			break;
+			
+		case "if":
+			for(var j=0; j<names.length; j++){
+				if(statement.condition.condOne == names[j]){
+					console.log("found variable");
+					if(statement.condition.operation == "equal" && variables[statement.condition.condOne] == parseInt(statement.condition.condTwo)){
+						console.log("condition works");
+						if(statement.statement["type"] = "declaration"){
+							console.log("its a declaration");
+							variables[statement.statement["variable"]] = parseInt(statement.statement["integer"]);
+						}
+					}
+					else if(statement.else["type"] = "print" && typeof(statement.else["string"]) == "string"){
+						console.log("Entered else print");
+						document.getElementById("console").value += "\n" + statement.else["string"];
+					}
+				}
+			}
+			break;
+			
+	}
+	
+}
+	console.log
+}
+	
+
+	
+
+
+</script>
+
+<textarea id="parse_code" rows="14" cols="70">
+start
+ = statement+
+
+statement
+ = space t:type endOfLine{return t;} / space v:verification endOfLine{return v;}
+
+
+type 
+ = expression
+/ declaration
+/ printing
+/ verification
+
+expression
+ = beginner space variable:variableName space "=" space first:variableData space operation:operation space second:variableData space terminator{return {type:operation,variable:variable,firstTerm:first,secondTerm:second};}
+
+declaration
+ = beginner space variable:variableName space "=" space int:integer space terminator{return {type:"declaration",variable:variable,integer:int};}
+
+variableName
+ = first:[a-zA-Z] second:[a-zA-Z0-9_]* {return first+second.join("");}
+
+variableData
+ = integer 
+/ variableName
+
+operation
+ = plus:"+" {return "addition";} / minus:"-" {return "substraction";} / multiplication:"*" {return "multiplication";} / division:"/" {return "division";}
+
+operationCondition
+ = equal:"==" {return "equal";} / more:">" {return "more";} / less:"<" {return "less";}
+
+integer
+ = digits: [0-9]+ {return parseInt(digits.join(""),10);}
+
+printing
+ = printBegin space string:string space terminator{return {type:"print",string:string};}
+
+
+
+verification
+ = "if" space "(" space condition:condition space ")" space endOfLine "<|"  endOfLine statement:statement+ space  endOfLine "|>" space endOfLine space elseStm:else? endOfLine {return {type:"if",condition:condition,statement:statement, else:elseStm};}
+
+else
+ = "else"  space endOfLine "<|"  endOfLine statement:statement+ space  endOfLine "|>" endOfLine {return statement;}
+
+condition
+ = a:variableData space op:operationCondition space b:variableData {return {operation:op,condOne:a,condTwo:b};}
+
+
+endOfLine
+ = [\n]*
+
+string
+ = "\"" letters:[^"]* "\"" { return letters.join(""); }
+
+space
+ =  [ ]*
+
+printBegin
+ = ">>"
+
+beginner
+ = ">"
+
+terminator 
+ = "<>"
+</textarea>
+
+<textarea id="code" rows="14" cols="70">
+> x = 3 <>
+> y = x + 4 <>
+</textarea>
+
+<br>
+	
+<textarea id="console" rows="7" cols="143"></textarea>
+
+<br>
+
+<button onClick="Parse()"  >Submit</button>
+
+
+</body>
+</html>
