@@ -1,0 +1,15 @@
+grammar Arrow;
+statement  : type;
+type : declaration | expression | print;
+print : PRINTBEGINNER .*? TERMINATOR;
+declaration : BEGINNER VARIABLENAME EQUAL variabledata TERMINATOR;
+expression : BEGINNER VARIABLENAME EQUAL variabledata OPERATION variabledata TERMINATOR;
+variabledata : variabledata OPERATION INTEGER | INTEGER | VARIABLENAME;
+VARIABLENAME : [a-zA-Z] [a-zA-Z0-9_]*;
+INTEGER : [0-9] [0-9]*;
+OPERATION : '+' | '-' | '*' | '/';
+PRINTBEGINNER : '>>';
+BEGINNER : '>';
+EQUAL : '=';
+TERMINATOR : '<>' ;
+WHITESPACE : [ \t\r\n]+ -> skip ;
