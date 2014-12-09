@@ -1,0 +1,29 @@
+"start": {
+        "0": ["0", "right", "start"],
+        "1" : ["1", "right", "one"],
+        "": [0, "right", "stop"]
+    },
+    "one": {
+        "0": ["0", "right", "one"],
+        "1": ["1", "right", "two"],
+        "": ["1", "right", "stop"]
+    },
+    
+        "two": {
+        "0": ["0", "right", "one"],
+        "1": ["0", "right", "two"],
+        "": ["1", "right", "three"]
+    },
+    
+        "three": {
+        "0": ["0", "right", "one"],
+        "1": ["0", "right", "two"],
+        "": ["0", "right", "stop"]
+    },
+    
+    "done": {
+        "0": ["0", "left", "done"],
+        "1": ["1", "left", "done"],
+        "": ["", "right", "stop"]
+    },
+    "stop": {}
